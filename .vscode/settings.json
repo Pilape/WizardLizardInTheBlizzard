@@ -1,0 +1,21 @@
+{
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/*.o": true,
+		"**/*.exe": true,
+	},
+	"files.associations": {
+		"stdio.h": "c",
+		"raylib.h": "c",
+		"*.m": "c",
+		"raymath.h": "c",
+		"player.h": "c",
+		"array": "cpp",
+		"string_view": "cpp",
+		"initializer_list": "cpp"
+	}
+}
