@@ -102,27 +102,24 @@ void EntityUpdate(Entity* self, float delta)
 {
     if (Vector2Length(self->vel) > self->MAX_SPEED) self->vel = Vector2Scale(Vector2Normalize(self->vel), self->MAX_SPEED);
 
+    for (int i=0; i<entityCount; i++)
+    {
+        if (self == entities[i]) continue;
+        if (self->colLayer != entities[i]->colLayer) continue;
+
+        SolveCollision(self, entities[i], delta);
+    }
 
     self->pos = Vector2Add(self->pos, Vector2Scale(self->vel, delta));
     self->vel = Vector2Scale(self->vel, self->friction);
 }
 
-void EntitiesUpdate(float delta)
+void EntitiesDraw()
 {
     for (int i=0; i<entityCount; i++)
     {
         Entity* self = entities[i];
-
-        switch (self->type)
-        {
-        case PLAYER:
-            
-            break;
-        
-
-        }
-
-        EntityUpdate(self, delta);
+        DrawCircleV(self->pos, self->size, RED);
     }
 }
 

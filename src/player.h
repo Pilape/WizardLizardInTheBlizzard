@@ -29,7 +29,7 @@ Player* PlayerCreate(Vector2 pos)
 {
     Player* newPlayer = malloc(sizeof(Player));
 
-    EntityInit(&newPlayer->base, newPlayer);
+    EntityInit(&newPlayer->base, newPlayer, PLAYER, 1);
     newPlayer->dir = Vector2Zero();
 
     return newPlayer;
@@ -44,7 +44,7 @@ void PlayerUpdate(Player* self, float delta)
     inputDir = Vector2Scale(inputDir, self->base.accel);
     self->base.vel = Vector2Add(self->base.vel, inputDir);
 
-    EntityUpdate(&self->base, delta);
+    //EntityUpdate(&self->base, delta);
 }
 
 void PlayerDraw(Player* self)

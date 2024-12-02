@@ -34,8 +34,23 @@ int main()
         cameraPos = Vector2Lerp(cameraPos, player->base.pos, 20 * delta);
 
         // Update
-        PlayerUpdate(player, delta);
-        EnemiesUpdate(&player->base, delta);
+        for (int i=0; i<entityCount; i++)
+        {
+            Entity* self = entities[i];
+
+            switch (self->type)
+            {
+            case PLAYER:
+                PlayerUpdate((Player*)self->parent, delta);
+                break;
+            
+            case ENEMY:
+                EnemyUpdate((Enemy*)self->parent, &player->base, delta);
+                break;
+            }
+
+            EntityUpdate(self, delta);
+        }
 
         static int enemyCooldown;
         if (enemyCooldown % enemySpawnRate == 0)
@@ -51,8 +66,7 @@ int main()
 
                 ClearBackground(WHITE);
 
-                PlayerDraw(player);
-                EnemiesDraw();
+                EntitiesDraw();
 
             EndMode2D();
             
