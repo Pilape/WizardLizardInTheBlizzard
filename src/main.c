@@ -18,8 +18,9 @@ int main()
 
     // Init
     Vector2 cameraPos = Vector2Zero();
-    Player* player = PlayerCreate(Vector2Zero());
+    Entity* player = PlayerCreate(Vector2Zero());
     
+
     int enemySpawnRate = 100;
 
     while (!WindowShouldClose())
@@ -31,34 +32,37 @@ int main()
         camera.offset = Vector2Scale((Vector2){GetScreenWidth(), GetScreenHeight()}, 0.5f);
         camera.target = cameraPos;
 
-        cameraPos = Vector2Lerp(cameraPos, player->base.pos, 20 * delta);
-
+        if (player!= NULL) cameraPos = Vector2Lerp(cameraPos, player->pos, 20 * delta);
+        //printf("x: %f, y: %f \n", player->pos.x, player->pos.y);
         // Update
+
+        static int enemyCooldown;
+        if (enemyCooldown % enemySpawnRate == 0)
+        {
+            EnemySpawn((Vector2){100, 100});
+            enemyCooldown = 0;
+        }
+        enemyCooldown++;
+
         for (int i=0; i<entityCount; i++)
         {
+            if (entities[i] == NULL) continue;
+
             Entity* self = entities[i];
 
             switch (self->type)
             {
             case PLAYER:
-                PlayerUpdate((Player*)self->parent, delta);
+                PlayerUpdate(self, delta);
                 break;
             
             case ENEMY:
-                EnemyUpdate((Enemy*)self->parent, &player->base, delta);
+                EnemyUpdate(self, player, delta);
                 break;
             }
 
             EntityUpdate(self, delta);
         }
-
-        static int enemyCooldown;
-        if (enemyCooldown % enemySpawnRate == 0)
-        {
-            EnemySpawn(Vector2Zero());
-            enemyCooldown = 0;
-        }
-        enemyCooldown++;
 
         // Draw
         BeginDrawing();

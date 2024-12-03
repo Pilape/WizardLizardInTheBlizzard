@@ -5,7 +5,7 @@
 #include <raymath.h>
 #include <stdio.h>
 
-enum parentType {
+enum childType {
     PLAYER,
     ENEMY
 };
@@ -17,28 +17,36 @@ typedef struct
     Vector2 vel;
 
     int health;
+    int MAX_HEALTH;
     float MAX_SPEED;
     float accel;
     float friction;
     float size;
 
-    void* parent;
-    enum parentType type;
+    void* child;
+    enum childType type;
 
     int colLayer;
 } Entity;
 
 #define MAX_ENTITY_COUNT 200
 
-Entity* entities[MAX_ENTITY_COUNT];
+Entity* entities[MAX_ENTITY_COUNT] = { NULL };
 int entityCount = 0;
 
-void EntityInit(Entity* self, void* parent, enum parentType type, int collisionLayer)
+Entity* EntityInit(enum childType type, int collisionLayer)
 {
     if (entityCount > MAX_ENTITY_COUNT)
     {
         printf("Entity capacity reached \n");
-        return;
+        return NULL;
+    }
+
+    Entity* self = malloc(sizeof(Entity));
+    if (self == NULL)
+    {
+        perror("Failed to allocate memory \n");
+        return NULL;
     }
 
     self->pos = Vector2Zero();
@@ -48,34 +56,37 @@ void EntityInit(Entity* self, void* parent, enum parentType type, int collisionL
     self->accel = 25;
 
     self->health = 20;
+    self->MAX_HEALTH = 20;
     self->size = 10;
     self->colLayer = collisionLayer;
 
-    self->parent = parent;
+    self->child = NULL;
     self->type = type;
 
     entities[entityCount] = self;
     entityCount++;
+
+    return self;
 }
 
-Vector2 ClosestPointOnLine(Vector2 line_start, Vector2 line_end, Vector2 target){ 
+Vector2 ClosestPointOnLine(Vector2 lineStart, Vector2 lineEnd, Vector2 target){ 
 
-    Vector2 closest_point = Vector2Zero();
+    Vector2 closestPoint = Vector2Zero();
 
-    float A = line_end.y - line_start.y;
-    float B = line_start.x - line_end.x;
+    float A = lineEnd.y - lineStart.y;
+    float B = lineStart.x - lineEnd.x;
 
-    double C1 = A*line_start.x + B*line_start.y;
-    double C2 = -B*line_start.x + A*line_start.y;
+    double C1 = A*lineStart.x + B*lineStart.y;
+    double C2 = -B*lineStart.x + A*lineStart.y;
 
     double det = A*A + B*B;
 
     if (det == 0) return target;
 
-    closest_point.x = (A*C1 - B*C2)/det;
-    closest_point.y = (A*C2 - -B*C1)/det;
+    closestPoint.x = (A*C1 - B*C2)/det;
+    closestPoint.y = (A*C2 - -B*C1)/det;
 
-    return closest_point;
+    return closestPoint;
 }
 
 void SolveCollision(Entity* entityA, Entity* entityB, float delta)
@@ -98,13 +109,27 @@ void SolveCollision(Entity* entityA, Entity* entityB, float delta)
     entityA->vel = Vector2Scale(Vector2Normalize(dirFromCollision), Vector2Length(entityA->vel));
 }
 
+void Kill(Entity* self)
+{
+    if (self->child != NULL)
+    {
+        free(self->child);
+        self->child = NULL;
+    }
+
+    free(self);
+    self = NULL;
+}
+
 void EntityUpdate(Entity* self, float delta)
 {
+
     if (Vector2Length(self->vel) > self->MAX_SPEED) self->vel = Vector2Scale(Vector2Normalize(self->vel), self->MAX_SPEED);
 
     for (int i=0; i<entityCount; i++)
     {
-        if (self == entities[i]) continue;
+
+        if (self == entities[i] || entities[i] == NULL) continue;
         if (self->colLayer != entities[i]->colLayer) continue;
 
         SolveCollision(self, entities[i], delta);
@@ -112,12 +137,20 @@ void EntityUpdate(Entity* self, float delta)
 
     self->pos = Vector2Add(self->pos, Vector2Scale(self->vel, delta));
     self->vel = Vector2Scale(self->vel, self->friction);
+
+    self->health = Clamp(self->health, 0, self->MAX_HEALTH);
+    if (self->health == 0)
+    {
+        Kill(self);
+    }
 }
 
 void EntitiesDraw()
 {
     for (int i=0; i<entityCount; i++)
     {
+        if (entities[i] == NULL) continue;
+
         Entity* self = entities[i];
         DrawCircleV(self->pos, self->size, RED);
     }
