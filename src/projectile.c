@@ -45,11 +45,13 @@ void ProjectileSpawn(Vector2 pos, Entity** list)
         newProj = NULL;
         return;
     }
-    temp->damage = 5;
+    temp->damage = 10;
     temp->dir = Vector2Normalize(Vector2Subtract(target->pos, pos));
 
     newProj->child = temp;
     newProj->MAX_SPEED = 1500;
+    newProj->accel = 100;
+    newProj->size = 5;
     newProj->pos = pos;
 
     *list = EntityInsert(*list, newProj);

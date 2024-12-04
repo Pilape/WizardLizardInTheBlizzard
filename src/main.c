@@ -36,8 +36,16 @@ void EntitiesUpdate(Entity** head, Entity* player, int delta)
 
 Camera2D camera;
 
+enum GameStates {
+    MENU,
+    GAME,
+    DEAD,
+};
+
 int main()
 {
+    enum GameStates gameState = GAME; 
+
     int scale = 1;
     const Vector2 SCREEN_SIZE = {800, 450};
     
@@ -55,38 +63,63 @@ int main()
 
     while (!WindowShouldClose())
     {
-        float delta = GetFrameTime();
-
-        scale = MIN(GetScreenWidth()/SCREEN_SIZE.x, GetScreenHeight()/SCREEN_SIZE.y);
-        camera.zoom = scale;
-        camera.offset = Vector2Scale((Vector2){GetScreenWidth(), GetScreenHeight()}, 0.5f);
-        camera.target = cameraPos;
-
-        if (player != NULL) cameraPos = Vector2Lerp(cameraPos, player->pos, 20 * delta);
-        //printf("x: %f, y: %f \n", player->pos.x, player->pos.y);
-        // Update
-
-        static int enemyCooldown;
-        if (enemyCooldown % enemySpawnRate == 0)
+        switch (gameState)
         {
-            EnemySpawn((Vector2){100, 100}, &entities);
-            enemyCooldown = 0;
-        }
-        enemyCooldown++;
+        case MENU:
+            /* code */
+            break;
+        
+        case GAME:
+            float delta = GetFrameTime();
 
-        EntitiesUpdate(&entities, player, delta);
+            scale = MIN(GetScreenWidth()/SCREEN_SIZE.x, GetScreenHeight()/SCREEN_SIZE.y);
+            camera.zoom = scale;
+            camera.offset = Vector2Scale((Vector2){GetScreenWidth(), GetScreenHeight()}, 0.5f);
+            camera.target = cameraPos;
+
+            if (player != NULL) cameraPos = Vector2Lerp(cameraPos, player->pos, 20 * delta);
+
+            static int enemyCooldown;
+            if (enemyCooldown % enemySpawnRate == 0)
+            {
+                EnemySpawn((Vector2){100, 100}, &entities);
+                enemyCooldown = 0;
+            }
+            enemyCooldown++;
+
+            EntitiesUpdate(&entities, player, delta);
+
+            if (player->type != PLAYER) gameState = DEAD; // If player has died, end game
+
+            break;
+
+        case DEAD:
+            break;
+        }
 
         // Draw
         BeginDrawing();
-            BeginMode2D(camera);
 
-                ClearBackground(WHITE);
-
-                EntitiesDraw(entities);
-
-            EndMode2D();
+            switch (gameState)
+            {
+            case MENU:
+                ClearBackground(BLACK);
+                break;
             
-            DrawFPS(10, 10);
+            case GAME:
+                BeginMode2D(camera);
+
+                    ClearBackground(WHITE);
+
+                    EntitiesDraw(entities);
+
+                EndMode2D();
+                break;
+
+            case DEAD:
+                ClearBackground(RED);
+                break;
+            }
         EndDrawing();
     }
 
