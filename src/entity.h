@@ -33,7 +33,7 @@ Entity* EntityInsert(Entity* head, Entity* data);
 
 Entity* EntityInit(enum childType type, int collisionLayer, Entity* list);
 
-void EntityUpdate(Entity* self, Entity* list);
+Entity* EntityUpdate(Entity* self, Entity* list);
 
 void EntitiesDraw(Entity* list);
 

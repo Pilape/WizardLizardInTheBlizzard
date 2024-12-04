@@ -30,11 +30,29 @@ void EnemySpawn(Vector2 pos, Entity** list)
     *list = EntityInsert(*list, newEnemy);
 }
 
-void EnemyUpdate(Entity* self, Entity* target, float delta)
+void EnemyUpdate(Entity* self, Entity* target, Entity* list, float delta)
 {
     if (target == NULL) return;
 
     Vector2 dir = Vector2Normalize(Vector2Subtract(target->pos, self->pos));
     self->vel = Vector2Add(self->vel, Vector2Scale(dir, self->accel));
+
+    Entity* temp = list;
+    while (temp)
+    {
+        if (temp->type != PLAYER)
+        {
+            temp = temp->next;
+            continue;
+        }
+
+        if (CheckCollisionCircles(self->pos, self->size, temp->pos, temp->size))
+        {
+            //self->health--;
+        }
+
+        temp = temp->next;
+    }
+    
 
 }

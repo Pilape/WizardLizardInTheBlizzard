@@ -23,28 +23,108 @@ Entity* EntityInsert(Entity* head, Entity* data)
     return head;
 }
 
-void EntityRemove(Entity* head, Entity* data)
+/* void EntityRemoveFront(Entity** head)
 {
-    if (head == NULL)
+    if (*head == NULL)
     {
         printf("List is empty \n");
         return;
     }
 
-    Entity* temp = head;
-    while (temp->next != data && temp->next != NULL)
+    Entity* temp = *head;
+
+    *head = temp->next;
+    free(temp);
+    temp = NULL;
+}
+
+void EntityRemoveBack(Entity** head)
+{
+    if (*head == NULL) {
+        printf("List is empty \n");
+        return;
+    }
+
+    Entity* temp = *head;
+    while (temp->next->next)
     {
+        temp = temp->next;
+    }
+
+    free(temp->next);
+    temp->next = NULL;
+} */
+
+Entity* EntityRemoveData(Entity** head, Entity** data) // Returns current data or data->next depending on success
+{
+/* 
+    Entity* prev;
+    Entity* temp = *head;
+
+    if (temp == NULL)
+    {
+        printf("List is empty \n");
+        return NULL;
+    }
+
+    if (*data == temp)
+    {
+        *head = temp->next;
+        free(temp);
+        return *head;
+    }
+
+
+    while (temp->next != *data && temp->next != NULL)
+    {
+        prev = temp;
         temp = temp->next;
     }
 
     if (temp->next == NULL)
     {
+        if (temp == *data) {
+            prev->next = temp->next;
+            free(temp);
+            return *head;
+        }
+
         printf("Data not found \n");
-        return;
+        return NULL;
     }
 
-    temp->next = data->next;
-    free(data);
+    free(*data);
+    *data = NULL;
+
+    return *head; */
+
+    if (*head == NULL || *data == NULL) // List or data is empty
+    {
+        return *data;
+    }
+
+    Entity* temp = *head;
+
+    if (*head == *data) // If data is first element;
+    {
+        *head = (*head)->next;
+        free(temp);
+        return *head;
+    }
+
+    while (temp->next)
+    {
+        if (temp->next == *data) break;
+
+        temp = temp->next;
+    }
+    
+    if (temp->next == NULL) return *data;
+
+    temp->next = (*data)->next;
+    free(*data);
+
+    return temp->next;
 }
 
 Entity* EntityInit(enum childType type, int collisionLayer, Entity* list)
@@ -117,7 +197,7 @@ void SolveCollision(Entity* entityA, Entity* entityB, float delta)
     entityA->vel = Vector2Scale(Vector2Normalize(dirFromCollision), Vector2Length(entityA->vel));
 }
 
-void EntityUpdate(Entity* self, Entity* list)
+Entity* EntityUpdate(Entity* self, Entity* list)
 {
     float delta = GetFrameTime();
 
@@ -143,7 +223,13 @@ void EntityUpdate(Entity* self, Entity* list)
     self->vel = Vector2Scale(self->vel, self->friction);
 
     self->health = Clamp(self->health, 0, self->MAX_HEALTH);
-    if (self->health == 0) EntityRemove(list, self);
+    if (self->health == 0)
+    {
+        return EntityRemoveData(&list, &self);
+    }
+
+    return self->next;
+
 }
 
 void EntitiesDraw(Entity* list)

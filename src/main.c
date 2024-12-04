@@ -18,13 +18,11 @@ void EntitiesUpdate(Entity* head, Entity* player, int delta)
             break;
         
         case ENEMY:
-            EnemyUpdate(self, player, delta);
+            EnemyUpdate(self, player, head, delta);
             break;
         }
 
-        EntityUpdate(self, delta, head);
-
-        self = self->next;
+        self = EntityUpdate(self, head);
     }
     
 }
