@@ -20,6 +20,9 @@
 		"entity.h": "c",
 		"enemy.h": "c",
 		"stdlib.h": "c",
-		"random": "c"
+		"random": "c",
+		"raygui.h": "c",
+		"stddef.h": "c",
+		"game_state.h": "c"
 	}
 }

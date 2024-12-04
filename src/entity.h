@@ -30,6 +30,8 @@ typedef struct __entity
     struct __entity* next;
 } Entity;
 
+void EntitiesFree(Entity** head);
+
 Entity* EntityInsert(Entity* head, Entity* data);
 
 Entity* EntityInit(enum childType type, int collisionLayer, Entity* list);

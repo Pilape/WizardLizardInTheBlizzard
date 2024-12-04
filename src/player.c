@@ -85,5 +85,4 @@ void PlayerUpdate(Entity* self, float delta, Entity* list)
         temp = temp->next;
     }
 
-    //EntityUpdate(&self->base, delta);
 }

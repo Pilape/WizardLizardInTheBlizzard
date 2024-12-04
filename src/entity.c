@@ -88,6 +88,16 @@ Entity* EntityRemoveData(Entity** head, Entity** data) // Returns current data o
     return temp->next;
 }
 
+void EntitiesFree(Entity** head)
+{
+    Entity* temp = *head;
+    while (temp)
+    {
+        temp = EntityRemoveData(head, &temp);
+    }
+    
+}
+
 Entity* EntityInit(enum childType type, int collisionLayer, Entity* list)
 {
 
