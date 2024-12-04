@@ -6,15 +6,17 @@
 
 #define MIN(a, b) ((a)<(b)? (a) : (b))
 
-void EntitiesUpdate(Entity* head, Entity* player, int delta)
+void EntitiesUpdate(Entity** head, Entity* player, int delta)
 {
-    Entity* self = head;
+    Entity* self = *head;
+
     while (self)
     {
+
         switch (self->type)
         {
         case PLAYER:
-            PlayerUpdate(self, delta, head);
+            PlayerUpdate(self, delta, *head);
             break;
         
         case ENEMY:
@@ -67,7 +69,7 @@ int main()
         }
         enemyCooldown++;
 
-        EntitiesUpdate(entities, player, delta);
+        EntitiesUpdate(&entities, player, delta);
 
         // Draw
         BeginDrawing();

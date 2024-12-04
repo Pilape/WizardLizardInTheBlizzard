@@ -57,46 +57,6 @@ void EntityRemoveBack(Entity** head)
 
 Entity* EntityRemoveData(Entity** head, Entity** data) // Returns current data or data->next depending on success
 {
-/* 
-    Entity* prev;
-    Entity* temp = *head;
-
-    if (temp == NULL)
-    {
-        printf("List is empty \n");
-        return NULL;
-    }
-
-    if (*data == temp)
-    {
-        *head = temp->next;
-        free(temp);
-        return *head;
-    }
-
-
-    while (temp->next != *data && temp->next != NULL)
-    {
-        prev = temp;
-        temp = temp->next;
-    }
-
-    if (temp->next == NULL)
-    {
-        if (temp == *data) {
-            prev->next = temp->next;
-            free(temp);
-            return *head;
-        }
-
-        printf("Data not found \n");
-        return NULL;
-    }
-
-    free(*data);
-    *data = NULL;
-
-    return *head; */
 
     if (*head == NULL || *data == NULL) // List or data is empty
     {
@@ -107,7 +67,7 @@ Entity* EntityRemoveData(Entity** head, Entity** data) // Returns current data o
 
     if (*head == *data) // If data is first element;
     {
-        *head = (*head)->next;
+        *head = temp->next;
         free(temp);
         return *head;
     }
@@ -123,6 +83,7 @@ Entity* EntityRemoveData(Entity** head, Entity** data) // Returns current data o
 
     temp->next = (*data)->next;
     free(*data);
+    *data = NULL;
 
     return temp->next;
 }
@@ -197,13 +158,13 @@ void SolveCollision(Entity* entityA, Entity* entityB, float delta)
     entityA->vel = Vector2Scale(Vector2Normalize(dirFromCollision), Vector2Length(entityA->vel));
 }
 
-Entity* EntityUpdate(Entity* self, Entity* list)
+Entity* EntityUpdate(Entity* self, Entity** list)
 {
     float delta = GetFrameTime();
 
     if (Vector2Length(self->vel) > self->MAX_SPEED) self->vel = Vector2Scale(Vector2Normalize(self->vel), self->MAX_SPEED);
 
-    Entity* temp = list;
+    Entity* temp = *list;
 
     while (temp)
     {
@@ -225,7 +186,7 @@ Entity* EntityUpdate(Entity* self, Entity* list)
     self->health = Clamp(self->health, 0, self->MAX_HEALTH);
     if (self->health == 0)
     {
-        return EntityRemoveData(&list, &self);
+        return EntityRemoveData(list, &self);
     }
 
     return self->next;
