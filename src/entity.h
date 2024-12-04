@@ -5,7 +5,8 @@
 
 enum childType {
     PLAYER,
-    ENEMY
+    ENEMY,
+    PROJECTILE,
 };
 
 

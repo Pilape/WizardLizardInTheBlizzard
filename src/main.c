@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include "player.h"
 #include "enemy.h"
+#include "projectile.h"
 
 #define MIN(a, b) ((a)<(b)? (a) : (b))
 
@@ -21,6 +22,10 @@ void EntitiesUpdate(Entity** head, Entity* player, int delta)
         
         case ENEMY:
             EnemyUpdate(self, player, head, delta);
+            break;
+
+        case PROJECTILE:
+            ProjectileUpdate(self, head, delta);
             break;
         }
 
