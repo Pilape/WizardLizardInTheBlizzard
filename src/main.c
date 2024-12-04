@@ -1,9 +1,33 @@
 #include <raylib.h>
 #include <raymath.h>
+#include <stddef.h>
 #include "player.h"
 #include "enemy.h"
 
 #define MIN(a, b) ((a)<(b)? (a) : (b))
+
+void EntitiesUpdate(Entity* head, Entity* player, int delta)
+{
+    Entity* self = head;
+    while (self)
+    {
+        switch (self->type)
+        {
+        case PLAYER:
+            PlayerUpdate(self, delta, head);
+            break;
+        
+        case ENEMY:
+            EnemyUpdate(self, player, delta);
+            break;
+        }
+
+        EntityUpdate(self, delta, head);
+
+        self = self->next;
+    }
+    
+}
 
 Camera2D camera;
 
@@ -18,7 +42,8 @@ int main()
 
     // Init
     Vector2 cameraPos = Vector2Zero();
-    Entity* player = PlayerCreate(Vector2Zero());
+    Entity* entities = NULL;
+    Entity* player = PlayerCreate(Vector2Zero(), &entities);
     
 
     int enemySpawnRate = 100;
@@ -32,37 +57,19 @@ int main()
         camera.offset = Vector2Scale((Vector2){GetScreenWidth(), GetScreenHeight()}, 0.5f);
         camera.target = cameraPos;
 
-        if (player!= NULL) cameraPos = Vector2Lerp(cameraPos, player->pos, 20 * delta);
+        if (player != NULL) cameraPos = Vector2Lerp(cameraPos, player->pos, 20 * delta);
         //printf("x: %f, y: %f \n", player->pos.x, player->pos.y);
         // Update
 
         static int enemyCooldown;
         if (enemyCooldown % enemySpawnRate == 0)
         {
-            EnemySpawn((Vector2){100, 100});
+            EnemySpawn((Vector2){100, 100}, &entities);
             enemyCooldown = 0;
         }
         enemyCooldown++;
 
-        for (int i=0; i<entityCount; i++)
-        {
-            if (entities[i] == NULL) continue;
-
-            Entity* self = entities[i];
-
-            switch (self->type)
-            {
-            case PLAYER:
-                PlayerUpdate(self, delta);
-                break;
-            
-            case ENEMY:
-                EnemyUpdate(self, player, delta);
-                break;
-            }
-
-            EntityUpdate(self, delta);
-        }
+        EntitiesUpdate(entities, player, delta);
 
         // Draw
         BeginDrawing();
@@ -70,7 +77,7 @@ int main()
 
                 ClearBackground(WHITE);
 
-                EntitiesDraw();
+                EntitiesDraw(entities);
 
             EndMode2D();
             
