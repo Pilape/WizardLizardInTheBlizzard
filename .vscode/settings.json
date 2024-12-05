@@ -23,6 +23,8 @@
 		"random": "c",
 		"raygui.h": "c",
 		"stddef.h": "c",
-		"game_state.h": "c"
+		"game_state.h": "c",
+		"resources.h": "c",
+		"projectile.h": "c"
 	}
 }

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "player.h"
 #include "projectile.h"
-#include "textures.h"
+#include "resources.h"
 
 #define ARRAY_LENGTH(x) (sizeof(x) / sizeof((x)[0]))
 
@@ -61,6 +61,7 @@ void PlayerUpdate(Entity* self, float delta, Entity* list, Vector2 mousePos)
     child->atkTime++;
     if (child->atkTime % child->atkCooldown == 0)
     {
+        PlaySound(sounds.shoot);
         ProjectileSpawn(self->pos, &list, child->damage);
         child->atkTime = 0;
     }
@@ -84,6 +85,7 @@ void PlayerUpdate(Entity* self, float delta, Entity* list, Vector2 mousePos)
         {
             if (CheckCollisionCircles(child->spine[i].pos, child->spine[i].size, temp->pos, temp->size))
             {
+                PlaySound(sounds.hurt);
                 self->health--;
                 temp->health--;
             }

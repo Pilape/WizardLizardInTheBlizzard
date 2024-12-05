@@ -1,7 +1,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "game_state.h"
-#include "textures.h"
+#include "resources.h"
 
 #define MIN(a, b) ((a)<(b)? (a) : (b))
 
@@ -17,10 +17,25 @@ int main()
     SetExitKey(KEY_DELETE);
 
     TexturesInit();
+    SoundInit();
     MenuInit();
+
+    float musicTimePlayed = 0.0f;
 
     while (gameRunning)
     {
+        UpdateMusicStream(sounds.mainMusic);
+
+        musicTimePlayed = GetMusicTimePlayed(sounds.mainMusic)/GetMusicTimeLength(sounds.mainMusic);
+
+        if (musicTimePlayed > 1.0f)
+        {
+            StopMusicStream(sounds.mainMusic);
+            PlayMusicStream(sounds.mainMusic);
+
+            musicTimePlayed = 0.0f;
+        }
+
         scale = MIN(GetScreenWidth()/SCREEN_SIZE.x, GetScreenHeight()/SCREEN_SIZE.y);
         camera.zoom = scale;
         camera.offset = Vector2Scale((Vector2){GetScreenWidth(), GetScreenHeight()}, 0.5f);        
@@ -58,6 +73,9 @@ int main()
             }
         EndDrawing();
     }
+
+    TexturesUnload();
+    SoundUnload();
 
     CloseWindow();
 

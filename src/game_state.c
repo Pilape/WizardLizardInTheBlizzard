@@ -4,6 +4,7 @@
 #include "player.h"
 #include "enemy.h"
 #include "projectile.h"
+#include "resources.h"
 
 #define RAYGUI_IMPLEMENTATION
 #include "libraries/raygui.h"
@@ -74,12 +75,14 @@ void MenuDraw()
 
     if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Start"))
     {
+        PlaySound(sounds.click);
         gameState = GAME;
         GameInit();
     }
 
     if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y+90*scale, 250*scale, 80*scale}, "Quit"))
     {
+        PlaySound(sounds.click);
         gameRunning = false;
     }
 }
@@ -107,6 +110,7 @@ void GameUpdate()
 
     if (IsKeyPressed(KEY_ESCAPE) && gameUiState != UPGRADE) 
     {
+        PlaySound(sounds.click);
         if (gameUiState == PAUSE) gameUiState = NONE;
         else gameUiState = PAUSE;
     }
@@ -222,11 +226,13 @@ void GameDraw()
 
         if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Continue"))
         {
+            PlaySound(sounds.click);
             gameUiState = NONE;
         }
 
         if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y+90*scale, 250*scale, 80*scale}, "Quit"))
         {
+            PlaySound(sounds.click);
             gameRunning = false;
         }
         break;
@@ -240,6 +246,7 @@ void GameDraw()
         {
             if (GuiButton((Rectangle){20*scale, camera.offset.y, 250*scale, 80*scale}, "Clone"))
             {
+                PlaySound(sounds.click);
                 Rectangle screenRec = {player->pos.x, player->pos.y, 800, 450};
                 // Center rectangle
                 screenRec.x -= screenRec.width/2;
@@ -257,6 +264,7 @@ void GameDraw()
         {
             if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y-90*scale, 250*scale, 80*scale}, "Speed"))
             {
+                PlaySound(sounds.click);
                 player->MAX_SPEED+= 50;
                 player->MAX_SPEED = Clamp(player->MAX_SPEED, 400, 2000);
 
@@ -268,7 +276,7 @@ void GameDraw()
         {
             if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Damage"))
             {
-
+                PlaySound(sounds.click);
                 playerChild->damage+= 2;
                 playerChild->damage = Clamp(playerChild->damage, 5, 20);
 
@@ -280,6 +288,7 @@ void GameDraw()
         {
             if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y+90*scale, 250*scale, 80*scale}, "Attack speed"))
             {
+                PlaySound(sounds.click);
                 if (playerChild->atkCooldown == 5) return;
                 playerChild->atkCooldown -= 5;
                 playerChild->atkCooldown = Clamp(playerChild->atkCooldown, 1, 50);
@@ -322,12 +331,14 @@ void DeadDraw()
 
     if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Retry"))
     {
+        PlaySound(sounds.click);
         gameState = GAME;
         GameInit();
     }
 
     if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y+90*scale, 250*scale, 80*scale}, "Ragequit"))
     {
+        PlaySound(sounds.click);
         gameRunning = false;
     }
 }

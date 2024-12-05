@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "enemy.h"
-#include "textures.h"
+#include "resources.h"
 
 typedef struct
 {
@@ -82,6 +82,7 @@ void ProjectileUpdate(Entity* self, Entity** list, float delta)
 
         if (CheckCollisionCircles(self->pos, self->size, temp->pos, temp->size))
         {
+            PlaySound(sounds.hurt);
             temp->health -= child->damage;
             self->health = 0;
         }

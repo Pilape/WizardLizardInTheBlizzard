@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "enemy.h"
-#include "textures.h"
+#include "resources.h"
 
 typedef struct
 {
