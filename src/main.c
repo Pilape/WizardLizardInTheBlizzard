@@ -11,7 +11,7 @@ int main()
     const Vector2 SCREEN_SIZE = {800, 450};
         
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
-    InitWindow(SCREEN_SIZE.x, SCREEN_SIZE.y, "Wizard Lizard in a Blizzard");
+    InitWindow(SCREEN_SIZE.x, SCREEN_SIZE.y, "Worm.game");
     SetWindowMinSize(800, 450);
 
     SetExitKey(KEY_DELETE);

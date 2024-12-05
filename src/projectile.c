@@ -3,11 +3,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "enemy.h"
+#include "textures.h"
 
 typedef struct
 {
     int damage;
     Vector2 dir;
+    int despawnTimer;
+    int lifeTime;
 } Projectile;
 
 Entity* GetClosestEnemy(Vector2 pos, Entity* list)
@@ -47,6 +50,8 @@ void ProjectileSpawn(Vector2 pos, Entity** list, int damage)
     }
     temp->damage = 10 + damage;
     temp->dir = Vector2Normalize(Vector2Subtract(target->pos, pos));
+    temp->lifeTime = 500;
+    temp->despawnTimer = 0;
 
     newProj->child = temp;
     newProj->MAX_SPEED = 1500;
@@ -59,7 +64,12 @@ void ProjectileSpawn(Vector2 pos, Entity** list, int damage)
 
 void ProjectileUpdate(Entity* self, Entity** list, float delta)
 {
-    self->vel = Vector2Add(self->vel, Vector2Scale(((Projectile*)self->child)->dir, self->accel));
+    Projectile* child = (Projectile*)self->child;
+
+    child->despawnTimer++;
+    if (child->despawnTimer > child->lifeTime) self->health = 0;
+
+    self->vel = Vector2Add(self->vel, Vector2Scale(child->dir, self->accel));
 
     Entity* temp = *list;
     while (temp)
@@ -72,7 +82,7 @@ void ProjectileUpdate(Entity* self, Entity** list, float delta)
 
         if (CheckCollisionCircles(self->pos, self->size, temp->pos, temp->size))
         {
-            temp->health -= ((Projectile*)self->child)->damage;
+            temp->health -= child->damage;
             self->health = 0;
         }
 
@@ -80,4 +90,10 @@ void ProjectileUpdate(Entity* self, Entity** list, float delta)
     }
     
 
+}
+
+void ProjectileDraw(Entity* self)
+{
+    DrawTexturePro(textures.projectile, (Rectangle){0, 0, 8, 8}, (Rectangle){self->pos.x, self->pos.y, 16, 16}, (Vector2){8, 8},
+    0, WHITE);
 }

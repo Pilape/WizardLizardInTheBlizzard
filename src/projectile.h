@@ -8,4 +8,6 @@ void ProjectileSpawn(Vector2 pos, Entity** list, int damage);
 
 void ProjectileUpdate(Entity* self, Entity** list, float delta);
 
+void ProjectileDraw(Entity* self);
+
 #endif

@@ -7,6 +7,7 @@ struct Textures
 {
     Texture2D player;
     Texture2D enemy;
+    Texture2D projectile;
 };
 
 extern struct Textures textures;

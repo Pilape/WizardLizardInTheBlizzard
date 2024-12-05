@@ -12,7 +12,7 @@
 
 bool gameRunning = true;
 
-enum GameStates gameState = MENU;
+enum GameStates gameState = DEAD;
 
 Vector2 cameraPos;
 Entity* entities = NULL;
@@ -22,6 +22,7 @@ int scale = 1;
 
 int enemySpawnRate = 100;
 
+int highscore = 0;
 int score = 0;
 float nextUpgradeScore = 10;
 
@@ -69,7 +70,7 @@ void MenuDraw()
 
     ClearBackground(BLACK);
 
-    DrawText("Wizard Lizard in a Blizzard", camera.offset.x-205*scale, 50*scale, 30 * scale, WHITE);
+    DrawText("Worm Game", camera.offset.x-82*scale, 50*scale, 30 * scale, WHITE);
 
     if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Start"))
     {
@@ -86,6 +87,12 @@ void MenuDraw()
 
 void GameInit()
 {
+    enemySpawnRate = 100;
+    score = 0;
+    nextUpgradeScore = 10;
+    enemyUpgrademods.health = 0;
+    enemyUpgrademods.speed = 0;
+
     cameraPos = Vector2Zero();
     entities = NULL;
     player = PlayerCreate(Vector2Zero(), &entities);
@@ -106,18 +113,20 @@ void GameUpdate()
 
     if (gameUiState != NONE) return; // Only update when unpaused
 
+    if (score > highscore) highscore = score;
+
     if (score >= nextUpgradeScore)
     {
         player->health = player->MAX_HEALTH; // Full heal :)
 
         // Upgrade enemy stats
-        enemyUpgrademods.health ++;
+        enemyUpgrademods.health++;
         enemyUpgrademods.speed += 20;
         enemySpawnRate -= 2;
 
         enemyUpgrademods.health = Clamp(enemyUpgrademods.health, 0, 100);
         enemyUpgrademods.speed = Clamp(enemyUpgrademods.health, 0, 1000);
-        enemySpawnRate = Clamp(enemySpawnRate, 10, 100);
+        enemySpawnRate = Clamp(enemySpawnRate, 5, 100);
 
         gameUiState = UPGRADE;
         nextUpgradeScore *= 1.5f;
@@ -185,8 +194,8 @@ void EntitiesDraw(Entity* list)
             EnemyDraw(self);
             break;
 
-        default:
-            DrawCircleV(self->pos, self->size, RED);
+        case PROJECTILE:
+            ProjectileDraw(self);
             break;
         }
 
@@ -227,7 +236,7 @@ void GameDraw()
 
         Player* playerChild = (Player*)player->child;
 
-        if (score > 100) // Late game upgrade
+        if (score > 300) // REALLY late game upgrade
         {
             if (GuiButton((Rectangle){20*scale, camera.offset.y, 250*scale, 80*scale}, "Clone"))
             {
@@ -307,8 +316,9 @@ void DeadDraw()
 
     ClearBackground(RED);
 
-    DrawText(TextFormat("Score: %d", score), camera.offset.x-42*scale, 25*scale, 20 * scale, PINK); // Score
     DrawText("You died :(", camera.offset.x-80*scale, 50*scale, 30 * scale, WHITE);
+    DrawText(TextFormat("Score: %d", score), camera.offset.x-42*scale, 125*scale, 20 * scale, WHITE); // Score
+    DrawText(TextFormat("Highscore: %d", highscore), camera.offset.x-62*scale, 150*scale, 20 * scale, PINK); // Highscore
 
     if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Retry"))
     {
