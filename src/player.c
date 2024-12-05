@@ -5,6 +5,8 @@
 #include "player.h"
 #include "projectile.h"
 
+#define ARRAY_LENGTH(x) (sizeof(x) / sizeof((x)[0]))
+
 Vector2 getInputVector()
 {
     Vector2 inputVector = Vector2Zero();
@@ -73,6 +75,7 @@ void PlayerUpdate(Entity* self, float delta, Entity* list)
         if (CheckCollisionCircles(self->pos, self->size, temp->pos, temp->size))
         {
             self->health--;
+            temp->health--;
         }
 
         temp = temp->next;

@@ -9,6 +9,8 @@ typedef struct
     
 } Enemy;
 
+struct EnemyUpgradeModifiers enemyUpgrademods = { 0 };
+
 void EnemySpawn(Vector2 pos, Entity** list)
 {
     Entity* newEnemy = EntityInit(ENEMY, 0, *list);
@@ -24,7 +26,9 @@ void EnemySpawn(Vector2 pos, Entity** list)
     }
 
     newEnemy->child = temp;
-    newEnemy->MAX_SPEED = 25;
+    newEnemy->MAX_SPEED = 25 + enemyUpgrademods.speed;
+    newEnemy->MAX_HEALTH += enemyUpgrademods.health;
+    newEnemy->health = newEnemy->MAX_HEALTH;
     newEnemy->pos = pos;
 
     *list = EntityInsert(*list, newEnemy);
@@ -44,11 +48,6 @@ void EnemyUpdate(Entity* self, Entity* target, Entity** list, float delta)
         {
             temp = temp->next;
             continue;
-        }
-
-        if (CheckCollisionCircles(self->pos, self->size, temp->pos, temp->size))
-        {
-            //self->health--;
         }
 
         temp = temp->next;

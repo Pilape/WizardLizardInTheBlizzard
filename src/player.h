@@ -5,10 +5,18 @@
 
 typedef struct
 {
+    Vector2 pos;
+    float size;
+} IkNode;
+
+typedef struct
+{
     Vector2 dir;
     int atkCooldown;
     int atkTime;
     int damage;
+
+    IkNode spine[12];
     
 } Player;
 

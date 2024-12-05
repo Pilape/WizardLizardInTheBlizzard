@@ -109,6 +109,16 @@ void GameUpdate()
     if (score >= nextUpgradeScore)
     {
         player->health = player->MAX_HEALTH; // Full heal :)
+
+        // Upgrade enemy stats
+        enemyUpgrademods.health ++;
+        enemyUpgrademods.speed += 20;
+        enemySpawnRate -= 2;
+
+        enemyUpgrademods.health = Clamp(enemyUpgrademods.health, 0, 100);
+        enemyUpgrademods.speed = Clamp(enemyUpgrademods.health, 0, 1000);
+        enemySpawnRate = Clamp(enemySpawnRate, 10, 100);
+
         gameUiState = UPGRADE;
         nextUpgradeScore *= 1.5f;
     }
@@ -153,6 +163,7 @@ void GameUpdate()
     {
         EntitiesFree(&entities);
         gameState = DEAD; 
+        gameUiState = NONE;
         DeadInit();
     }
 
@@ -192,6 +203,23 @@ void GameDraw()
 
         Player* playerChild = (Player*)player->child;
 
+        if (score > 100) // Late game upgrade
+        {
+            if (GuiButton((Rectangle){20*scale, camera.offset.y, 250*scale, 80*scale}, "Clone"))
+            {
+                Rectangle screenRec = {player->pos.x, player->pos.y, 800, 450};
+                // Center rectangle
+                screenRec.x -= screenRec.width/2;
+                screenRec.y -= screenRec.height/2;
+
+                Vector2 spawnPoint = {GetRandomValue(screenRec.x, screenRec.x+screenRec.width), GetRandomValue(screenRec.y, screenRec.y+screenRec.height)};
+
+                PlayerCreate(spawnPoint, &entities);
+
+                gameUiState = NONE;
+            }
+        }
+
         if (player->MAX_SPEED != 2000)
         {
             if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y-90*scale, 250*scale, 80*scale}, "Speed"))
@@ -208,7 +236,7 @@ void GameDraw()
             if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Damage"))
             {
 
-                playerChild->damage++;
+                playerChild->damage+= 2;
                 playerChild->damage = Clamp(playerChild->damage, 5, 20);
 
                 gameUiState = NONE;
@@ -221,7 +249,7 @@ void GameDraw()
             {
                 if (playerChild->atkCooldown == 5) return;
                 playerChild->atkCooldown -= 5;
-                playerChild->atkCooldown = Clamp(playerChild->atkCooldown, 5, 50);
+                playerChild->atkCooldown = Clamp(playerChild->atkCooldown, 1, 50);
 
                 gameUiState = NONE;
             }
@@ -255,6 +283,7 @@ void DeadDraw()
 
     ClearBackground(RED);
 
+    DrawText(TextFormat("Score: %d", score), camera.offset.x-42*scale, 25*scale, 20 * scale, PINK); // Score
     DrawText("You died :(", camera.offset.x-80*scale, 50*scale, 30 * scale, WHITE);
 
     if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Retry"))
