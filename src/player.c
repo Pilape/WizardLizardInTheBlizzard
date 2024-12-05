@@ -8,18 +8,6 @@
 
 #define ARRAY_LENGTH(x) (sizeof(x) / sizeof((x)[0]))
 
-Vector2 getInputVector()
-{
-    Vector2 inputVector = Vector2Zero();
-
-    if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) inputVector.y--;
-    if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) inputVector.x--;
-    if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) inputVector.y++;
-    if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) inputVector.x++;
-
-    return inputVector;
-}
-
 Entity* PlayerCreate(Vector2 pos, Entity** list)
 {
     Entity* newPlayer = EntityInit(PLAYER, 1, *list);
@@ -64,7 +52,7 @@ void IKForward(IkNode chain[], int len, Vector2 target)
 }
 
 
-void PlayerUpdate(Entity* self, float delta, Entity* list)
+void PlayerUpdate(Entity* self, float delta, Entity* list, Vector2 mousePos)
 {
     Player* child = (Player*)self->child;
 
@@ -77,11 +65,10 @@ void PlayerUpdate(Entity* self, float delta, Entity* list)
         child->atkTime = 0;
     }
 
-    Vector2 inputDir = Vector2Normalize(getInputVector());
-    if (!Vector2Equals(inputDir, Vector2Zero())) child->dir = inputDir;
+    child->dir = Vector2Normalize(Vector2Subtract(mousePos, self->pos));
 
-    inputDir = Vector2Scale(inputDir, self->accel);
-    self->vel = Vector2Add(self->vel, inputDir);
+    Vector2 newVel = Vector2Scale(child->dir, self->accel);
+    self->vel = Vector2Add(self->vel, newVel);
 
 
     Entity* temp = list;

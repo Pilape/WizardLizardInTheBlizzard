@@ -37,7 +37,7 @@ void EntitiesUpdate(Entity** head, Entity* player, int delta)
         switch (self->type)
         {
         case PLAYER:
-            PlayerUpdate(self, delta, *head);
+            PlayerUpdate(self, delta, *head, GetScreenToWorld2D(GetMousePosition(), camera));
             break;
         
         case ENEMY:

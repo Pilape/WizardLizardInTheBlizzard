@@ -23,7 +23,7 @@ typedef struct
 
 Entity* PlayerCreate(Vector2 pos, Entity** list);
 
-void PlayerUpdate(Entity* self, float delta, Entity* list);
+void PlayerUpdate(Entity* self, float delta, Entity* list, Vector2 mousePos);
 
 void PlayerDraw(Entity* self);
 
