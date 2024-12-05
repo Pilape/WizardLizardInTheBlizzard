@@ -22,6 +22,9 @@ int scale = 1;
 
 int enemySpawnRate = 100;
 
+int score = 0;
+float nextUpgradeScore = 10;
+
 void EntitiesUpdate(Entity** head, Entity* player, int delta)
 {
     
@@ -45,7 +48,7 @@ void EntitiesUpdate(Entity** head, Entity* player, int delta)
             break;
         }
 
-        self = EntityUpdate(self, head);
+        self = EntityUpdate(self, head, &score);
     }
     
 }
@@ -66,13 +69,15 @@ void MenuDraw()
 
     ClearBackground(BLACK);
 
-    if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y-90*scale, 250*scale, 80*scale}, "Start"))
+    DrawText("Wizard Lizard in a Blizzard", camera.offset.x-205*scale, 50*scale, 30 * scale, WHITE);
+
+    if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Start"))
     {
         gameState = GAME;
         GameInit();
     }
 
-    if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Quit"))
+    if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y+90*scale, 250*scale, 80*scale}, "Quit"))
     {
         gameRunning = false;
     }
@@ -86,9 +91,28 @@ void GameInit()
     player = PlayerCreate(Vector2Zero(), &entities);
 }
 
+enum uiStates {NONE, PAUSE, UPGRADE};
+
+enum uiStates gameUiState = NONE;
+
 void GameUpdate()
 {
-    
+
+    if (IsKeyPressed(KEY_ESCAPE) && gameUiState != UPGRADE) 
+    {
+        if (gameUiState == PAUSE) gameUiState = NONE;
+        else gameUiState = PAUSE;
+    }
+
+    if (gameUiState != NONE) return; // Only update when unpaused
+
+    if (score >= nextUpgradeScore)
+    {
+        player->health = player->MAX_HEALTH; // Full heal :)
+        gameUiState = UPGRADE;
+        nextUpgradeScore *= 1.5f;
+    }
+
     float delta = GetFrameTime();
 
     camera.target = cameraPos;
@@ -136,11 +160,82 @@ void GameUpdate()
 
 void GameDraw()
 {
+    // Game world
     BeginMode2D(camera);
         ClearBackground(WHITE);
 
         EntitiesDraw(entities);
+
     EndMode2D();
+
+    guiFont.baseSize = 5 / scale;
+
+    // UI
+    switch (gameUiState)
+    {
+    case PAUSE:
+        DrawText("Paused", camera.offset.x-56*scale, 50*scale, 30 * scale, BLACK);
+
+        if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Continue"))
+        {
+            gameUiState = NONE;
+        }
+
+        if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y+90*scale, 250*scale, 80*scale}, "Quit"))
+        {
+            gameRunning = false;
+        }
+        break;
+    
+    case UPGRADE:
+        DrawText("Choose an upgrade:", camera.offset.x-145*scale, 50*scale, 30 * scale, BLACK);
+
+        Player* playerChild = (Player*)player->child;
+
+        if (player->MAX_SPEED != 2000)
+        {
+            if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y-90*scale, 250*scale, 80*scale}, "Speed"))
+            {
+                player->MAX_SPEED+= 50;
+                player->MAX_SPEED = Clamp(player->MAX_SPEED, 400, 2000);
+
+                gameUiState = NONE;
+            }
+        }
+
+        if (playerChild->damage < 20)
+        {
+            if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Damage"))
+            {
+
+                playerChild->damage++;
+                playerChild->damage = Clamp(playerChild->damage, 5, 20);
+
+                gameUiState = NONE;
+            }
+        }
+
+        if (playerChild->atkCooldown != 5)
+        {
+            if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y+90*scale, 250*scale, 80*scale}, "Attack speed"))
+            {
+                if (playerChild->atkCooldown == 5) return;
+                playerChild->atkCooldown -= 5;
+                playerChild->atkCooldown = Clamp(playerChild->atkCooldown, 5, 50);
+
+                gameUiState = NONE;
+            }
+        }
+        break;
+
+    case NONE:
+        DrawText(TextFormat("Score: %d", score), camera.offset.x-42*scale, 25*scale, 20 * scale, DARKGRAY); // Score
+
+        DrawRectangle(camera.offset.x-102*scale, 378*scale, ((player->MAX_HEALTH*10)+4)*scale, 44*scale, DARKGRAY); // Outline
+        DrawRectangle(camera.offset.x-100*scale, 380*scale, player->MAX_HEALTH*10*scale, 40*scale, GRAY); // No health
+        DrawRectangle(camera.offset.x-100*scale, 380*scale, player->health*10*scale, 40*scale, GREEN); // Health
+        break;
+    }
 }
 
 
@@ -160,15 +255,15 @@ void DeadDraw()
 
     ClearBackground(RED);
 
-    DrawText("You died :(", camera.offset.x, 20*scale, 20 * scale, WHITE);
+    DrawText("You died :(", camera.offset.x-80*scale, 50*scale, 30 * scale, WHITE);
 
-    if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y-90*scale, 250*scale, 80*scale}, "Retry"))
+    if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Retry"))
     {
         gameState = GAME;
         GameInit();
     }
 
-    if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Quit"))
+    if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y+90*scale, 250*scale, 80*scale}, "Ragequit"))
     {
         gameRunning = false;
     }

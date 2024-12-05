@@ -29,7 +29,7 @@ Entity* GetClosestEnemy(Vector2 pos, Entity* list)
     
 }
 
-void ProjectileSpawn(Vector2 pos, Entity** list)
+void ProjectileSpawn(Vector2 pos, Entity** list, int damage)
 {
     Entity* target = GetClosestEnemy(pos, *list);
     if (target == NULL) return;
@@ -45,7 +45,7 @@ void ProjectileSpawn(Vector2 pos, Entity** list)
         newProj = NULL;
         return;
     }
-    temp->damage = 10;
+    temp->damage = 10 + damage;
     temp->dir = Vector2Normalize(Vector2Subtract(target->pos, pos));
 
     newProj->child = temp;

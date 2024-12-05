@@ -5,14 +5,6 @@
 #include "player.h"
 #include "projectile.h"
 
-typedef struct
-{
-    Vector2 dir;
-    int atkCooldown;
-    int atkTime;
-    
-} Player;
-
 Vector2 getInputVector()
 {
     Vector2 inputVector = Vector2Zero();
@@ -41,6 +33,7 @@ Entity* PlayerCreate(Vector2 pos, Entity** list)
     temp->dir = Vector2Zero();
     temp->atkCooldown = 50;
     temp->atkTime = 0;
+    temp->damage = 0;
 
     newPlayer->child = temp;
     newPlayer->pos = pos;
@@ -57,7 +50,7 @@ void PlayerUpdate(Entity* self, float delta, Entity* list)
     child->atkTime++;
     if (child->atkTime % child->atkCooldown == 0)
     {
-        ProjectileSpawn(self->pos, &list);
+        ProjectileSpawn(self->pos, &list, child->damage);
         child->atkTime = 0;
     }
 

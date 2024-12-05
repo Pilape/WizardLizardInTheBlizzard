@@ -168,7 +168,7 @@ void SolveCollision(Entity* entityA, Entity* entityB, float delta)
     entityA->vel = Vector2Scale(Vector2Normalize(dirFromCollision), Vector2Length(entityA->vel));
 }
 
-Entity* EntityUpdate(Entity* self, Entity** list)
+Entity* EntityUpdate(Entity* self, Entity** list, int* score)
 {
     float delta = GetFrameTime();
 
@@ -196,6 +196,8 @@ Entity* EntityUpdate(Entity* self, Entity** list)
     self->health = Clamp(self->health, 0, self->MAX_HEALTH);
     if (self->health == 0)
     {
+        if (self->type == ENEMY) (*score)++;
+
         return EntityRemoveData(list, &self);
     }
 
