@@ -12,7 +12,7 @@
 
 bool gameRunning = true;
 
-enum GameStates gameState = DEAD;
+enum GameStates gameState = MENU;
 
 Vector2 cameraPos;
 Entity* entities = NULL;
