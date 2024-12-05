@@ -169,12 +169,30 @@ void GameUpdate()
 
 }
 
+void EntitiesDraw(Entity* list)
+{
+    Entity* self = list;
+
+    while (self)
+    {
+        if (self->type == PLAYER)
+        {
+            PlayerDraw(self);
+        }
+        else
+        {
+            DrawCircleV(self->pos, self->size, RED);
+        }
+
+        self = self->next;
+    }
+}
+
 void GameDraw()
 {
     // Game world
     BeginMode2D(camera);
         ClearBackground(WHITE);
-
         EntitiesDraw(entities);
 
     EndMode2D();

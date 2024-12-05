@@ -1,12 +1,12 @@
 #include <raylib.h>
 #include <raymath.h>
 #include "game_state.h"
+#include "textures.h"
 
 #define MIN(a, b) ((a)<(b)? (a) : (b))
 
 int main()
 {
-    MenuInit();
 
     const Vector2 SCREEN_SIZE = {800, 450};
         
@@ -15,6 +15,9 @@ int main()
     SetWindowMinSize(800, 450);
 
     SetExitKey(KEY_DELETE);
+
+    TexturesInit();
+    MenuInit();
 
     while (gameRunning)
     {

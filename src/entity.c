@@ -204,15 +204,3 @@ Entity* EntityUpdate(Entity* self, Entity** list, int* score)
     return self->next;
 
 }
-
-void EntitiesDraw(Entity* list)
-{
-    Entity* self = list;
-
-    while (self)
-    {
-        DrawCircleV(self->pos, self->size, RED);
-
-        self = self->next;
-    }
-}
