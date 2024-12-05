@@ -17,7 +17,7 @@ typedef struct
     int atkTime;
     int damage;
 
-    IkNode spine[20];
+    IkNode spine[12];
     
 } Player;
 

@@ -5,4 +5,5 @@ struct Textures textures;
 void TexturesInit()
 {
     textures.player = LoadTexture("resources/sprites/player.png");
+    textures.enemy = LoadTexture("resources/sprites/enemy.png");
 }

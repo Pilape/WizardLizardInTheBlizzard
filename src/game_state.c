@@ -175,13 +175,19 @@ void EntitiesDraw(Entity* list)
 
     while (self)
     {
-        if (self->type == PLAYER)
+        switch (self->type)
         {
+        case PLAYER:
             PlayerDraw(self);
-        }
-        else
-        {
+            break;
+        
+        case ENEMY:
+            EnemyDraw(self);
+            break;
+
+        default:
             DrawCircleV(self->pos, self->size, RED);
+            break;
         }
 
         self = self->next;

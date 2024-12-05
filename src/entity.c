@@ -117,7 +117,7 @@ Entity* EntityInit(enum childType type, int collisionLayer, Entity* list)
 
     self->health = 20;
     self->MAX_HEALTH = 20;
-    self->size = 10;
+    self->size = 16;
     self->colLayer = collisionLayer;
 
     self->child = NULL;

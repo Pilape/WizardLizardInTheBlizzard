@@ -3,10 +3,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "enemy.h"
+#include "textures.h"
 
 typedef struct
 {
-    
+    Vector2 dir;
 } Enemy;
 
 struct EnemyUpgradeModifiers enemyUpgrademods = { 0 };
@@ -41,6 +42,8 @@ void EnemyUpdate(Entity* self, Entity* target, Entity** list, float delta)
     Vector2 dir = Vector2Normalize(Vector2Subtract(target->pos, self->pos));
     self->vel = Vector2Add(self->vel, Vector2Scale(dir, self->accel));
 
+    ((Enemy*)self->child)->dir = dir;
+
     Entity* temp = *list;
     while (temp)
     {
@@ -54,4 +57,11 @@ void EnemyUpdate(Entity* self, Entity* target, Entity** list, float delta)
     }
     
 
+}
+
+void EnemyDraw(Entity* self)
+{
+    Enemy* enemyChild = (Enemy*)self->child;
+    DrawTexturePro(textures.enemy, (Rectangle){0, 0, 16, 16}, (Rectangle){self->pos.x, self->pos.y, 32, 32}, (Vector2){16, 16},
+    atan2(enemyChild->dir.x, -enemyChild->dir.y)*RAD2DEG, WHITE); // dir.y is negative because apparently that works
 }
