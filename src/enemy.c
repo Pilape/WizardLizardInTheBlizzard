@@ -28,8 +28,8 @@ void EnemySpawn(Vector2 pos, Entity** list)
 
     newEnemy->child = temp;
     newEnemy->MAX_SPEED = 25 + enemyUpgrademods.speed;
-    newEnemy->MAX_HEALTH += enemyUpgrademods.health;
-    newEnemy->health = newEnemy->MAX_HEALTH;
+    //newEnemy->MAX_HEALTH += enemyUpgrademods.health;
+    //newEnemy->health = newEnemy->MAX_HEALTH;
     newEnemy->pos = pos;
 
     *list = EntityInsert(*list, newEnemy);

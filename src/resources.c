@@ -31,6 +31,14 @@ void SoundInit()
     PlayMusicStream(sounds.mainMusic);
 }
 
+void PlaySoundPshift(Sound sound)
+{
+    float pitch = GetRandomValue(90, 110)/100;
+    SetSoundPitch(sound, pitch);
+    PlaySound(sound);
+    SetSoundPitch(sound, 1.0f);
+}
+
 void SoundUnload()
 {
     UnloadSound(sounds.click);

@@ -21,7 +21,7 @@ Entity* player;
 Camera2D camera;
 int scale = 1;
 
-int enemySpawnRate = 100;
+int enemySpawnRate = 200;
 
 int highscore = 0;
 int score = 0;
@@ -90,10 +90,10 @@ void MenuDraw()
 
 void GameInit()
 {
-    enemySpawnRate = 100;
+    enemySpawnRate = 200;
     score = 0;
     nextUpgradeScore = 10;
-    enemyUpgrademods.health = 0;
+    //enemyUpgrademods.health = 0;
     enemyUpgrademods.speed = 0;
 
     cameraPos = Vector2Zero();
@@ -107,6 +107,8 @@ enum uiStates gameUiState = NONE;
 
 void GameUpdate()
 {
+    if (score >= highscore) highscore = score;
+
 
     if (IsKeyPressed(KEY_ESCAPE) && gameUiState != UPGRADE) 
     {
@@ -117,23 +119,21 @@ void GameUpdate()
 
     if (gameUiState != NONE) return; // Only update when unpaused
 
-    if (score > highscore) highscore = score;
-
     if (score >= nextUpgradeScore)
     {
         player->health = player->MAX_HEALTH; // Full heal :)
 
         // Upgrade enemy stats
-        enemyUpgrademods.health++;
-        enemyUpgrademods.speed += 20;
-        enemySpawnRate -= 2;
+        //enemyUpgrademods.health += 2;
+        enemyUpgrademods.speed++;
+        enemySpawnRate -= 5;
 
-        enemyUpgrademods.health = Clamp(enemyUpgrademods.health, 0, 100);
-        enemyUpgrademods.speed = Clamp(enemyUpgrademods.health, 0, 1000);
-        enemySpawnRate = Clamp(enemySpawnRate, 5, 100);
+        //enemyUpgrademods.health = Clamp(enemyUpgrademods.health, 0, 250);
+        enemyUpgrademods.speed = Clamp(enemyUpgrademods.speed, 0, 500);
+        enemySpawnRate = Clamp(enemySpawnRate, 1, 100);
 
         gameUiState = UPGRADE;
-        nextUpgradeScore *= 1.5f;
+        nextUpgradeScore *= 1.2f;
     }
 
     float delta = GetFrameTime();
@@ -242,7 +242,7 @@ void GameDraw()
 
         Player* playerChild = (Player*)player->child;
 
-        if (score > 300) // REALLY late game upgrade
+        if (score > 150) // late game upgrade
         {
             if (GuiButton((Rectangle){20*scale, camera.offset.y, 250*scale, 80*scale}, "Clone"))
             {
@@ -277,7 +277,7 @@ void GameDraw()
             if (GuiButton((Rectangle){camera.offset.x-125*scale, camera.offset.y, 250*scale, 80*scale}, "Damage"))
             {
                 PlaySound(sounds.click);
-                playerChild->damage+= 2;
+                playerChild->damage += 2;
                 playerChild->damage = Clamp(playerChild->damage, 5, 20);
 
                 gameUiState = NONE;
@@ -301,9 +301,9 @@ void GameDraw()
     case NONE:
         DrawText(TextFormat("Score: %d", score), camera.offset.x-42*scale, 25*scale, 20 * scale, DARKGRAY); // Score
 
-        DrawRectangle(camera.offset.x-102*scale, 378*scale, ((player->MAX_HEALTH*10)+4)*scale, 44*scale, DARKGRAY); // Outline
-        DrawRectangle(camera.offset.x-100*scale, 380*scale, player->MAX_HEALTH*10*scale, 40*scale, GRAY); // No health
-        DrawRectangle(camera.offset.x-100*scale, 380*scale, player->health*10*scale, 40*scale, GREEN); // Health
+        DrawRectangle(camera.offset.x-129*scale, 378*scale, (player->MAX_HEALTH/2+4)*scale, 44*scale, DARKGRAY); // Outline
+        DrawRectangle(camera.offset.x-127*scale, 380*scale, player->MAX_HEALTH/2*scale, 40*scale, GRAY); // No health
+        DrawRectangle(camera.offset.x-127*scale, 380*scale, player->health/2*scale, 40*scale, GREEN); // Health
         break;
     }
 }

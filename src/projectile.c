@@ -60,6 +60,8 @@ void ProjectileSpawn(Vector2 pos, Entity** list, int damage)
     newProj->pos = pos;
 
     *list = EntityInsert(*list, newProj);
+
+    PlaySoundPshift(sounds.shoot);
 }
 
 void ProjectileUpdate(Entity* self, Entity** list, float delta)
@@ -82,7 +84,7 @@ void ProjectileUpdate(Entity* self, Entity** list, float delta)
 
         if (CheckCollisionCircles(self->pos, self->size, temp->pos, temp->size))
         {
-            PlaySound(sounds.hurt);
+            PlaySoundPshift(sounds.hurt);
             temp->health -= child->damage;
             self->health = 0;
         }

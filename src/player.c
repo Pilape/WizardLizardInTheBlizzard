@@ -35,6 +35,8 @@ Entity* PlayerCreate(Vector2 pos, Entity** list)
     
     newPlayer->child = temp;
     newPlayer->pos = pos;
+    newPlayer->MAX_HEALTH = 500;
+    newPlayer->health = newPlayer->MAX_HEALTH;
 
     *list = EntityInsert(*list, newPlayer);
 
@@ -61,7 +63,6 @@ void PlayerUpdate(Entity* self, float delta, Entity* list, Vector2 mousePos)
     child->atkTime++;
     if (child->atkTime % child->atkCooldown == 0)
     {
-        PlaySound(sounds.shoot);
         ProjectileSpawn(self->pos, &list, child->damage);
         child->atkTime = 0;
     }
@@ -85,7 +86,7 @@ void PlayerUpdate(Entity* self, float delta, Entity* list, Vector2 mousePos)
         {
             if (CheckCollisionCircles(child->spine[i].pos, child->spine[i].size, temp->pos, temp->size))
             {
-                PlaySound(sounds.hurt);
+                PlaySoundPshift(sounds.hurt);
                 self->health--;
                 temp->health--;
             }

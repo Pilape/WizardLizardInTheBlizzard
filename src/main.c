@@ -24,6 +24,13 @@ int main()
 
     while (gameRunning)
     {
+
+        if (IsWindowResized() && !IsWindowMaximized()) // Only maximize no manual rescaling
+        {
+            SetWindowSize(SCREEN_SIZE.x, SCREEN_SIZE.y);
+        }
+
+
         UpdateMusicStream(sounds.mainMusic);
 
         musicTimePlayed = GetMusicTimePlayed(sounds.mainMusic)/GetMusicTimeLength(sounds.mainMusic);
@@ -38,7 +45,7 @@ int main()
 
         scale = MIN(GetScreenWidth()/SCREEN_SIZE.x, GetScreenHeight()/SCREEN_SIZE.y);
         camera.zoom = scale;
-        camera.offset = Vector2Scale((Vector2){GetScreenWidth(), GetScreenHeight()}, 0.5f);        
+        camera.offset = Vector2Scale((Vector2){GetScreenWidth(), GetScreenHeight()}, 0.5f);
 
         switch (gameState)
         {

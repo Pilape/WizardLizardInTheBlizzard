@@ -6,7 +6,7 @@
 
 struct EnemyUpgradeModifiers {
     int speed;
-    int health;
+    //int health;
 };
 
 extern struct EnemyUpgradeModifiers enemyUpgrademods;

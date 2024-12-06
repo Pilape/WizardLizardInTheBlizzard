@@ -27,6 +27,7 @@ struct Sfx
 extern struct Sfx sounds;
 
 void SoundInit(void);
+void PlaySoundPshift(Sound sound);
 void SoundUnload(void);
 
 #endif
